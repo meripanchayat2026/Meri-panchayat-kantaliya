@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#124b8a">
+<title>मेरी पंचायत | Meri Panchayat</title>
+<style>
+:root{--blue:#124b8a;--blue2:#1e6ac0;--green:#16845b;--bg:#f4f7fb;--ink:#182436;--muted:#607087;--line:#dbe4ef;--white:#fff;--orange:#f3a62b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#0e376a,#1e6ac0);color:white;padding:22px max(18px,calc((100% - 1120px)/2));}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--blue);display:grid;place-items:center;font-size:26px}.brand h1{font-size:21px;margin:0}.brand p{margin:3px 0 0;opacity:.88;font-size:13px}
+button,select,input,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:650}.lang{background:#fff;color:var(--blue)}.primary{background:var(--blue2);color:white}.secondary{background:#eaf2ff;color:var(--blue)}.danger{background:#fff0ee;color:#a33125}
+main{max-width:1120px;margin:22px auto;padding:0 16px}.hero{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:center}.hero h2{font-size:clamp(23px,4vw,34px);margin:0 0 10px}.hero p{color:var(--muted);line-height:1.6}.notice{background:#fff7e6;border:1px solid #f4d69a;padding:12px 14px;border-radius:12px;color:#79531b;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#f1f7ff;border-radius:13px;padding:14px}.stat b{display:block;font-size:24px;color:var(--blue)}.stat span{font-size:12px;color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.navbtn{background:white;border:1px solid var(--line);color:var(--ink)}.navbtn.active{background:var(--blue);color:white}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:18px}.card h3{margin:0 0 8px;font-size:17px}.card p{color:var(--muted);font-size:14px;line-height:1.55}.emoji{font-size:25px;margin-bottom:9px}
+.panel{display:none}.panel.active{display:block}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-weight:650;font-size:13px}input,select,textarea{border:1px solid #cbd7e5;border-radius:9px;padding:11px;background:white;color:var(--ink);width:100%}textarea{min-height:100px;resize:vertical}.help{font-size:12px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;background:white;font-size:14px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:11px}th{background:#f0f5fb}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.pill{display:inline-block;background:#fff1cf;color:#805800;padding:4px 8px;border-radius:99px;font-size:12px}.empty{color:var(--muted);padding:18px;text-align:center}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:28px 16px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat b{font-size:19px}}
+</style>
+</head>
+<body>
+<header><div class="top">
+<div class="brand"><div class="logo">🏡</div><div><h1 id="brandTitle">मेरी पंचायत</h1><p id="brandSub">शिकायत • पारदर्शिता • विकास</p></div></div>
+<button class="lang" id="langBtn" onclick="toggleLang()">English</button>
+</div></header>
+<main>
+<section class="hero">
+<div>
+<span class="pill" id="statusLabel">प्रारंभिक डेमो</span>
+<h2 id="heroTitle">आपकी पंचायत, आपकी आवाज़</h2>
+<p id="heroDesc">शिकायत दर्ज करें, उसकी स्थिति देखें और पंचायत के सार्वजनिक विकास कार्यों की जानकारी प्राप्त करें।</p>
+<div style="display:flex;gap:9px;flex-wrap:wrap"><button class="primary" onclick="showPanel('complaint')" id="fileBtn">＋ शिकायत दर्ज करें</button><button class="secondary" onclick="showPanel('track')" id="trackBtn">शिकायत ट्रैक करें</button></div>
+</div>
+<div class="stats">
+<div class="stat"><b id="countAll">0</b><span id="statAll">डेमो शिकायतें</span></div>
+<div class="stat"><b id="countOpen">0</b><span id="statOpen">लंबित / जारी</span></div>
+<div class="stat"><b>—</b><span id="statWards">सत्यापित वार्ड संख्या बाकी</span></div>
+</div>
+</section>
+<div class="notice" style="margin-top:14px" id="demoNotice">महत्वपूर्ण: यह शुरुआती डेमो है। यहाँ जमा शिकायत केवल इसी ब्राउज़र में सहेजी जाती है; यह सरकारी पोर्टल या कलेक्टर कार्यालय को नहीं भेजी जाती।</div>
+<nav>
+<button class="navbtn active" data-panel="home" onclick="showPanel('home')" id="navHome">होम</button>
+<button class="navbtn" data-panel="complaint" onclick="showPanel('complaint')" id="navComplaint">नई शिकायत</button>
+<button class="navbtn" data-panel="track" onclick="showPanel('track')" id="navTrack">मेरी शिकायतें</button>
+<button class="navbtn" data-panel="wards" onclick="showPanel('wards')" id="navWards">वार्ड</button>
+<button class="navbtn" data-panel="works" onclick="showPanel('works')" id="navWorks">विकास कार्य</button>
+<button class="navbtn" data-panel="admin" onclick="showPanel('admin')" id="navAdmin">एडमिन डेमो</button>
+</nav>
+
+<section class="panel active" id="panel-home">
+<div class="grid">
+<div class="card"><div class="emoji">📝</div><h3 id="tile1h">शिकायत दर्ज करें</h3><p id="tile1p">सड़क, पानी, सफाई या अन्य सार्वजनिक समस्या की जानकारी दें।</p><button class="secondary" onclick="showPanel('complaint')" id="tile1b">शुरू करें</button></div>
+<div class="card"><div class="emoji">🔎</div><h3 id="tile2h">शिकायत की स्थिति</h3><p id="tile2p">शिकायत नंबर से डेमो रिकॉर्ड खोजें।</p><button class="secondary" onclick="showPanel('track')" id="tile2b">स्थिति देखें</button></div>
+<div class="card"><div class="emoji">🏗️</div><h3 id="tile3h">पंचायत के कार्य</h3><p id="tile3p">सार्वजनिक विकास कार्यों का रिकॉर्ड यहाँ जोड़ा जाएगा।</p><button class="secondary" onclick="showPanel('works')" id="tile3b">कार्य देखें</button></div>
+</div>
+</section>
+
+<section class="panel" id="panel-complaint">
+<div class="card"><h3 id="formTitle">नई शिकायत दर्ज करें</h3><p id="formIntro">कृपया सही जानकारी भरें। निजी जानकारी केवल आवश्यक होने पर दें।</p>
+<form id="complaintForm" class="formgrid">
+<div class="field"><label for="citizen" id="lCitizen">नाम (वैकल्पिक)</label><input id="citizen" maxlength="100" placeholder="नाम / Name"></div>
+<div class="field"><label for="phone" id="lPhone">मोबाइल नंबर (वैकल्पिक)</label><input id="phone" inputmode="tel" maxlength="15" placeholder="संपर्क नंबर"></div>
+<div class="field"><label for="village" id="lVillage">गाँव</label><select id="village"><option value="Kantaliya">कंटालिया / Kantaliya</option><option value="Sangawato ki Dhani">संगावतो की ढाणी / Sangawato ki Dhani</option><option value="Other">अन्य / Other (सत्यापन बाकी)</option></select></div>
+<div class="field"><label for="ward" id="lWard">वार्ड नंबर</label><select id="ward"><option value="">वार्ड चुनें / Select ward</option></select><div class="help" id="wardHelp">वार्ड सूची आधिकारिक पुष्टि के बाद भरी जाएगी।</div></div>
+<div class="field"><label for="category" id="lCategory">शिकायत श्रेणी *</label><select id="category" required><option value="">चुनें / Select</option><option>सड़क / Road</option><option>पानी / Water</option><option>नाली / Drainage</option><option>सफाई / Sanitation</option><option>स्ट्रीट लाइट / Streetlight</option><option>पेंशन / Pension</option><option>राशन / Ration</option><option>सरकारी योजना / Government scheme</option><option>भ्रष्टाचार / Corruption</option><option>अन्य / Other</option></select></div>
+<div class="field"><label for="place" id="lPlace">समस्या का स्थान</label><input id="place" maxlength="200" placeholder="मोहल्ला / सड़क / स्थान"></div>
+<div class="field full"><label for="details" id="lDetails">शिकायत का विवरण *</label><textarea id="details" required maxlength="3000" placeholder="समस्या क्या है? कब से है?"></textarea></div>
+<div class="field full"><label><input type="checkbox" id="consent" required style="width:auto"> <span id="lConsent">मैं पुष्टि करता/करती हूँ कि दी गई जानकारी मेरी जानकारी के अनुसार सही है। *</span></label></div>
+<div class="field full"><button class="primary" type="submit" id="submitBtn">डेमो शिकायत जमा करें</button><div class="help" id="privacyHelp">इस डेमो में फोटो अपलोड और सरकारी प्रेषण सक्षम नहीं हैं।</div></div>
+</form>
+<div id="submitResult" aria-live="polite"></div>
+</div></section>
+
+<section class="panel" id="panel-track">
+<div class="card"><h3 id="trackTitle">शिकायत ट्रैक करें</h3><div class="formgrid"><div class="field"><label for="trackId" id="lTrackId">शिकायत नंबर</label><input id="trackId" placeholder="MP-YYYYMMDD-XXXX"></div><div class="field" style="justify-content:end"><button class="primary" onclick="trackComplaint()" id="trackSearch">खोजें</button></div></div><div id="trackResult"></div><h3 style="margin-top:22px" id="allComplaintsTitle">इस ब्राउज़र की डेमो शिकायतें</h3><div id="complaintList"></div></div>
+</section>
+
+<section class="panel" id="panel-wards">
+<div class="card"><h3 id="wardsTitle">वार्ड सूची</h3><p id="wardsDesc">वार्ड संख्या, सीमाएँ और वार्ड पंच के नाम संबंधित आधिकारिक रिकॉर्ड से पुष्टि के बाद जोड़े जाएंगे।</p><div class="tablewrap"><table><thead><tr><th id="thWard">वार्ड</th><th id="thRep">वार्ड पंच</th><th id="thVillage">गाँव / क्षेत्र</th><th id="thVerify">स्थिति</th></tr></thead><tbody id="wardRows"><tr><td colspan="4" class="empty">अधिकृत वार्ड सूची अभी जोड़ी नहीं गई है।</td></tr></tbody></table></div></div>
+</section>
+
+<section class="panel" id="panel-works">
+<div class="card"><h3 id="worksTitle">पंचायत के विकास कार्य</h3><p id="worksDesc">केवल सत्यापित सार्वजनिक रिकॉर्ड और अधिकृत दस्तावेज के आधार पर कार्य, लागत और प्रगति प्रकाशित करें।</p><div class="tablewrap"><table><thead><tr><th id="thWork">कार्य</th><th id="thCost">स्वीकृत लागत</th><th id="thProgress">प्रगति</th><th id="thSource">स्रोत</th></tr></thead><tbody><tr><td colspan="4" class="empty" id="noWorks">अभी कोई सत्यापित कार्य रिकॉर्ड नहीं जोड़ा गया है।</td></tr></tbody></table></div></div>
+</section>
+
+<section class="panel" id="panel-admin">
+<div class="card"><h3 id="adminTitle">एडमिन पैनल — डेमो</h3><p id="adminDesc">यह सार्वजनिक डेमो है, सुरक्षित एडमिन लॉगिन नहीं। वास्तविक संस्करण में केवल अधिकृत उपयोगकर्ता ही रिकॉर्ड बदल सकेंगे।</p><div class="grid">
+<div class="card"><h3 id="adminStat1">सभी शिकायतें</h3><p id="adminAll">0</p></div><div class="card"><h3 id="adminStat2">लंबित / जारी</h3><p id="adminPending">0</p></div><div class="card"><h3 id="adminStat3">समाधान</h3><p id="adminResolved">0</p></div>
+</div><div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="exportCsv()" id="exportBtn">डेमो CSV निर्यात</button><button class="danger" onclick="clearDemo()" id="clearBtn">डेमो डेटा मिटाएँ</button></div><p class="help" id="adminWarning">यहाँ से कलेक्टर या किसी सरकारी कार्यालय को शिकायत नहीं भेजी जा सकती।</p></div>
+</section>
+</main>
+<footer id="footerText">मेरी पंचायत • कंटालिया, मारवाड़ जंक्शन, पाली, राजस्थान • प्रारंभिक डेमो</footer>
+<script>
+const translations = {
+hi:{
+brandTitle:"मेरी पंचायत",brandSub:"शिकायत • पारदर्शिता • विकास",statusLabel:"प्रारंभिक डेमो",heroTitle:"आपकी पंचायत, आपकी आवाज़",heroDesc:"शिकायत दर्ज करें, उसकी स्थिति देखें और पंचायत के सार्वजनिक विकास कार्यों की जानकारी प्राप्त करें।",fileBtn:"＋ शिकायत दर्ज करें",trackBtn:"शिकायत ट्रैक करें",statAll:"डेमो शिकायतें",statOpen:"लंबित / जारी",statWards:"सत्यापित वार्ड संख्या बाकी",demoNotice:"महत्वपूर्ण: यह शुरुआती डेमो है। यहाँ जमा शिकायत केवल इसी ब्राउज़र में सहेजी जाती है; यह सरकारी पोर्टल या कलेक्टर कार्यालय को नहीं भेजी जाती।",navHome:"होम",navComplaint:"नई शिकायत",navTrack:"मेरी शिकायतें",navWards:"वार्ड",navWorks:"विकास कार्य",navAdmin:"एडमिन डेमो",tile1h:"शिकायत दर्ज करें",tile1p:"सड़क, पानी, सफाई या अन्य सार्वजनिक समस्या की जानकारी दें।",tile1b:"शुरू करें",tile2h:"शिकायत की स्थिति",tile2p:"शिकायत नंबर से डेमो रिकॉर्ड खोजें।",tile2b:"स्थिति देखें",tile3h:"पंचायत के कार्य",tile3p:"सार्वजनिक विकास कार्यों का रिकॉर्ड यहाँ जोड़ा जाएगा।",tile3b:"कार्य देखें",formTitle:"नई शिकायत दर्ज करें",formIntro:"कृपया सही जानकारी भरें। निजी जानकारी केवल आवश्यक होने पर दें।",lCitizen:"नाम (वैकल्पिक)",lPhone:"मोबाइल नंबर (वैकल्पिक)",lVillage:"गाँव",lWard:"वार्ड नंबर",wardHelp:"वार्ड सूची आधिकारिक पुष्टि के बाद भरी जाएगी।",lCategory:"शिकायत श्रेणी *",lPlace:"समस्या का स्थान",lDetails:"शिकायत का विवरण *",lConsent:"मैं पुष्टि करता/करती हूँ कि दी गई जानकारी मेरी जानकारी के अनुसार सही है। *",submitBtn:"डेमो शिकायत जमा करें",privacyHelp:"इस डेमो में फोटो अपलोड और सरकारी प्रेषण सक्षम नहीं हैं।",trackTitle:"शिकायत ट्रैक करें",lTrackId:"शिकायत नंबर",trackSearch:"खोजें",allComplaintsTitle:"इस ब्राउज़र की डेमो शिकायतें",wardsTitle:"वार्ड सूची",wardsDesc:"वार्ड संख्या, सीमाएँ और वार्ड पंच के नाम संबंधित आधिकारिक रिकॉर्ड से पुष्टि के बाद जोड़े जाएंगे।",thWard:"वार्ड",thRep:"वार्ड पंच",thVillage:"गाँव / क्षेत्र",thVerify:"स्थिति",worksTitle:"पंचायत के विकास कार्य",worksDesc:"केवल सत्यापित सार्वजनिक रिकॉर्ड और अधिकृत दस्तावेज के आधार पर कार्य, लागत और प्रगति प्रकाशित करें।",thWork:"कार्य",thCost:"स्वीकृत लागत",thProgress:"प्रगति",thSource:"स्रोत",noWorks:"अभी कोई सत्यापित कार्य रिकॉर्ड नहीं जोड़ा गया है।",adminTitle:"एडमिन पैनल — डेमो",adminDesc:"यह सार्वजनिक डेमो है, सुरक्षित एडमिन लॉगिन नहीं। वास्तविक संस्करण में केवल अधिकृत उपयोगकर्ता ही रिकॉर्ड बदल सकेंगे।",adminStat1:"सभी शिकायतें",adminStat2:"लंबित / जारी",adminStat3:"समाधान",exportBtn:"डेमो CSV निर्यात",clearBtn:"डेमो डेटा मिटाएँ",adminWarning:"यहाँ से कलेक्टर या किसी सरकारी कार्यालय को शिकायत नहीं भेजी जा सकती।",footerText:"मेरी पंचायत • कंटालिया, मारवाड़ जंक्शन, पाली, राजस्थान • प्रारंभिक डेमो"
+},
+en:{
+brandTitle:"Meri Panchayat",brandSub:"Grievances • Transparency • Development",statusLabel:"Starter demo",heroTitle:"Your Panchayat, Your Voice",heroDesc:"Submit a grievance, track its status, and view public information about local development works.",fileBtn:"＋ Submit a grievance",trackBtn:"Track grievance",statAll:"Demo grievances",statOpen:"Open / in progress",statWards:"Ward count pending verification",demoNotice:"Important: This is an early demo. Submissions are stored only in this browser; they are not sent to a government portal or the Collector's office.",navHome:"Home",navComplaint:"New grievance",navTrack:"My grievances",navWards:"Wards",navWorks:"Development works",navAdmin:"Admin demo",tile1h:"Submit a grievance",tile1p:"Report a public issue such as roads, water, sanitation or another concern.",tile1b:"Start",tile2h:"Grievance status",tile2p:"Find a demo record using its reference number.",tile2b:"Check status",tile3h:"Panchayat works",tile3p:"Verified public development records will be added here.",tile3b:"View works",formTitle:"Submit a new grievance",formIntro:"Please provide accurate information. Share personal details only when necessary.",lCitizen:"Name (optional)",lPhone:"Mobile number (optional)",lVillage:"Village",lWard:"Ward number",wardHelp:"Ward list will be added after official verification.",lCategory:"Grievance category *",lPlace:"Issue location",lDetails:"Grievance details *",lConsent:"I confirm that the information is accurate to the best of my knowledge. *",submitBtn:"Submit demo grievance",privacyHelp:"Photo uploads and official forwarding are not enabled in this demo.",trackTitle:"Track a grievance",lTrackId:"Grievance reference",trackSearch:"Search",allComplaintsTitle:"Demo grievances in this browser",wardsTitle:"Ward list",wardsDesc:"Ward numbers, boundaries and elected representatives will be added after checking official records.",thWard:"Ward",thRep:"Ward representative",thVillage:"Village / area",thVerify:"Status",worksTitle:"Panchayat development works",worksDesc:"Publish work, cost and progress only from verified public records and authorized documents.",thWork:"Work",thCost:"Approved cost",thProgress:"Progress",thSource:"Source",noWorks:"No verified work records have been added yet.",adminTitle:"Admin panel — demo",adminDesc:"This is a public demo, not a secure admin login. In production, only authorized users will be able to change records.",adminStat1:"All grievances",adminStat2:"Open / in progress",adminStat3:"Resolved",exportBtn:"Export demo CSV",clearBtn:"Clear demo data",adminWarning:"This demo cannot send a grievance to the Collector or any government office.",footerText:"Meri Panchayat • Kantaliya, Marwar Junction, Pali, Rajasthan • Starter demo"
+}};
+let lang="hi";
+const $=id=>document.getElementById(id);
+function toggleLang(){lang=lang==="hi"?"en":"hi";const t=translations[lang];Object.entries(t).forEach(([id,val])=>{if($(id))$(id).textContent=val});$("langBtn").textContent=lang==="hi"?"English":"हिंदी";document.documentElement.lang=lang==="hi"?"hi":"en";render()}
+function showPanel(name){document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));$("panel-"+name).classList.add("active");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.panel===name));if(name==="track"||name==="admin")render();window.scrollTo({top:0,behavior:"smooth"})}
+function getData(){try{return JSON.parse(localStorage.getItem("mp_demo_complaints")||"[]")}catch(e){return []}}
+function saveData(d){localStorage.setItem("mp_demo_complaints",JSON.stringify(d))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){const d=getData();$("countAll").textContent=d.length;$("countOpen").textContent=d.filter(x=>x.status!=="Resolved").length;$("adminAll").textContent=d.length;$("adminPending").textContent=d.filter(x=>x.status!=="Resolved").length;$("adminResolved").textContent=d.filter(x=>x.status==="Resolved").length;const el=$("complaintList");if(!d.length){el.innerHTML='<div class="empty">'+(lang==="hi"?"अभी कोई डेमो शिकायत नहीं है।":"No demo grievances yet.")+'</div>';return}el.innerHTML='<div class="tablewrap"><table><thead><tr><th>'+(lang==="hi"?"नंबर":"Reference")+'</th><th>'+(lang==="hi"?"श्रेणी":"Category")+'</th><th>'+(lang==="hi"?"तारीख":"Date")+'</th><th>'+(lang==="hi"?"स्थिति":"Status")+'</th></tr></thead><tbody>'+d.slice().reverse().map(x=>`<tr><td>${esc(x.id)}</td><td>${esc(x.category)}</td><td>${esc(x.date)}</td><td>${esc(x.status==="Received"?(lang==="hi"?"प्राप्त (डेमो)":"Received (demo)"):x.status)}</td></tr>`).join("")+'</tbody></table></div>'}
+$("complaintForm").addEventListener("submit",e=>{e.preventDefault();const d=getData();const now=new Date();const id="MP-"+now.toISOString().slice(0,10).replaceAll("-","")+"-"+Math.random().toString(36).slice(2,6).toUpperCase();const item={id,date:now.toLocaleDateString(),citizen:$("citizen").value.trim(),phone:$("phone").value.trim(),village:$("village").value,ward:$("ward").value,category:$("category").value,place:$("place").value.trim(),details:$("details").value.trim(),status:"Received"};d.push(item);saveData(d);$("submitResult").innerHTML=`<div class="notice" style="margin-top:14px"><b>${lang==="hi"?"डेमो शिकायत सहेजी गई":"Demo grievance saved"}</b><br>${lang==="hi"?"आपका डेमो नंबर":"Your demo reference"}: <b>${esc(id)}</b><br>${lang==="hi"?"इसे नोट कर लें। यह सरकारी शिकायत संख्या नहीं है।":"Save this reference. It is not an official government complaint number."}</div>`;$("trackId").value=id;$("complaintForm").reset();render()});
+function trackComplaint(){const id=$("trackId").value.trim().toUpperCase();const x=getData().find(a=>a.id.toUpperCase()===id);$("trackResult").innerHTML=x?`<div class="card" style="margin-top:14px"><b>${esc(x.id)}</b><p>${esc(x.category)} • ${esc(x.village)} • ${esc(x.date)}</p><p>${esc(x.details)}</p><span class="pill">${lang==="hi"?"प्राप्त (केवल डेमो)":"Received (demo only)"}</span><p class="help">${lang==="hi"?"यह रिकॉर्ड केवल इस ब्राउज़र में है।":"This record exists only in this browser."}</p></div>`:`<div class="empty">${lang==="hi"?"इस ब्राउज़र में शिकायत नंबर नहीं मिला।":"Reference not found in this browser."}</div>`}
+function exportCsv(){const d=getData();const fields=["id","date","village","ward","category","place","details","status"];const rows=[fields.join(","),...d.map(x=>fields.map(k=>'"'+String(x[k]??"").replaceAll('"','""')+'"').join(","))];const blob=new Blob(["\ufeff"+rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="meri-panchayat-demo-complaints.csv";a.click();URL.revokeObjectURL(a.href)}
+function clearDemo(){if(confirm(lang==="hi"?"क्या इस ब्राउज़र की सभी डेमो शिकायतें मिटानी हैं?":"Delete all demo grievances stored in this browser?")){saveData([]);render();$("trackResult").innerHTML="";$("submitResult").innerHTML=""}}
+render();
+</script>
+</body></html>
